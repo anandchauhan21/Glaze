@@ -24,7 +24,7 @@ need an AI model, GPU, cloud database, paid dashboard service or build toolchain
 It runs independently of the product it monitors. Viewing the dashboard reads
 local reports; it does not send extra checks to your applications.
 
-**Status: 0.1.0, early release.** This is a small private monitoring tool, not a
+**Status: 0.2.0, early release.** This is a small private monitoring tool, not a
 security scanner, a full observability platform, or a guarantee of availability.
 It is a custom dashboard inspired by BI reporting, not Microsoft Power BI.
 
@@ -228,6 +228,30 @@ Sugarcoat monitoring entries, then install Glaze's monitor timers against the sa
 data directory. Review the resulting schedule so each check runs only once.
 Glaze never migrates or changes production applications.
 
+## Auto-start switch
+
+The dashboard includes **Auto-start Glaze**. Once the viewer service is installed
+and user lingering is enabled, ON enables `glaze-dashboard.service` for future
+boots. OFF disables that boot setting without stopping the currently running
+viewer. It does not alter monitoring timers, legacy cron, SSH tunnels or products.
+The browser must be able to reach Glaze to change the setting; a stopped server
+cannot start itself from a disconnected browser.
+
+One-time Jetson setup (stop the foreground viewer with Ctrl+C first):
+
+```bash
+cd ~/Glaze
+GLAZE_DATA_DIR="$HOME/sugarcoat-monitor" bash scripts/install.sh viewer
+sudo loginctl enable-linger "$USER"
+```
+
+Use the normal default data directory instead for a fresh installation. Update
+existing installations by re-running the viewer installer so the service gets
+the narrowly scoped write permission needed to manage its enablement symlink.
+The switch displays setup/error states and verifies changes with systemd.
+No administrator password is collected in the browser. SSH forwarding is still
+required from each viewing device.
+
 ## Interpret the numbers correctly
 
 - **PASS:** the configured check matched at that recorded time.
@@ -235,7 +259,7 @@ Glaze never migrates or changes production applications.
 - **BLOCKED:** a required execution could not complete (for example Chromium
   unavailable). Existing legacy curl failures may be recorded as FAIL.
 - **STALE:** last HTTP evidence is older than 10 minutes, or browser evidence
-  older than 20 minutes. Thresholds are fixed in 0.1.
+  older than 20 minutes. Thresholds are fixed in 0.2.
 - **NO DATA:** no matching sample was found in the selected report period.
 
 Sample pass rate = PASS / (PASS + FAIL + BLOCKED). Missing scheduled runs are not
@@ -249,7 +273,7 @@ logging, charts may reflect only a tail of that file. Malformed lines are counte
 and excluded. Future-dated records are excluded; keep the host clock accurate.
 URLs are the identity for HTTP history: changing a URL starts a new series. The
 single browser stream has no historical target ID; use a new data directory or
-archive browser logs when changing that target. Data retention is manual in 0.1.
+archive browser logs when changing that target. Data retention is manual in 0.2.
 
 ## Security and privacy
 

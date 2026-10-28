@@ -1,14 +1,19 @@
 # Security policy
 
-Glaze 0.1 is an early release, not an independently audited security product.
+Glaze 0.2 is an early release, not an independently audited security product.
 
 ## Boundary
 
 The dashboard binds only to 127.0.0.1:18765. Use an SSH local forward. It checks
 Host and a random bearer token, suppresses access logs, escapes displayed data
-through textContent, and uses no remote scripts/fonts/analytics. It has no
-commands to modify applications, trigger monitoring, change configuration, or
-read arbitrary paths. Responses use no-store and no-referrer headers.
+through textContent, and uses no remote scripts/fonts/analytics. It has no commands to modify applications, trigger monitoring, edit target
+configuration, or read arbitrary paths. One authenticated POST endpoint may
+enable/disable only the fixed `glaze-dashboard.service` user unit. It requires
+the private URL token, exact same-origin Origin, a per-process CSRF header, and
+a size-limited JSON boolean. It accepts no unit names or shell commands, uses
+no sudo, and cannot start/stop other services. Turning auto-start off does not
+stop the current viewer. Initial service installation and user lingering are
+terminal-only administrative setup. Responses use no-store and no-referrer headers.
 
 The URL is a secret: it remains in browser history and may appear in screenshots.
 Rotate with `python3 -m glaze.link --rotate`, then restart Glaze. HTTP is only
@@ -34,7 +39,7 @@ not configure state-changing URLs. Browser checks do not submit forms.
 
 Temporary browser data is deleted after normal completion; hard crashes or
 power loss can leave private temporary directories. Reports are private by
-filesystem mode but not encrypted. Log retention is manual in 0.1; monitor disk
+filesystem mode but not encrypted. Log retention is manual in 0.2; monitor disk
 space. HTTP and browser jobs have separate overlap locks and may overlap each
 other. Resource usage depends on target pages.
 

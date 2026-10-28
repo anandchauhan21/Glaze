@@ -35,6 +35,7 @@ for name,module,args in [('dashboard','glaze.dashboard',''),('http','glaze.monit
     text+='Environment='+quote('GLAZE_CONFIG='+config)+'\nEnvironment='+quote('GLAZE_DATA_DIR='+data)+'\n'
     text+='ExecStart=/usr/bin/python3 -m '+module+' '+args+'\nUMask=0077\n'
     text+=hardening+'ReadWritePaths='+quote(data)+'\nPrivateTmp=yes\n'
+    if name=='dashboard': text+='ReadWritePaths='+quote(units)+'\n'
     if name=='dashboard':text+='Restart=on-failure\nRestartSec=5\nStandardOutput=null\n\n[Install]\nWantedBy=default.target\n'
     else:text+='TimeoutStartSec=15min\n'
     (units/('glaze-'+name+'.service')).write_text(text)
