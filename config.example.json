@@ -1,0 +1,13 @@
+{
+  "timezone": "Asia/Kolkata",
+  "targets": [
+    {"label": "Example homepage", "url": "https://example.com/", "expected_status": 200}
+  ],
+  "browser": {
+    "enabled": false,
+    "label": "Login form rendering",
+    "url": "https://example.com/",
+    "executable": "/snap/bin/chromium",
+    "fields": [{"name": "username", "type": "text"}, {"name": "password", "type": "password"}]
+  }
+}
